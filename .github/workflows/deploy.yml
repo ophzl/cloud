@@ -2,11 +2,11 @@ name: Deploy ASP.Net Core app
 env:
   DOTNET_VERSION: '6.0.x'
 on:
-  pull_request:
-  push:
-    paths:
-      - 'DotNetCoreSqlDb/**'
-  workflow_dispatch: 
+  workflow_dispatch:
+    inputs:
+      artifact_workflow_number:
+        required: true
+        description: 'workflow_id where artifacts will be uploaded'
 jobs:
   deploy:
     runs-on: windows-latest
@@ -17,6 +17,9 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: .net-app
+          workflow: ci.yml
+          run_number: ${{inputs.artifact_workflow_number}}
+          workflow_conclusion: success
 
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
