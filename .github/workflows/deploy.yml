@@ -12,7 +12,7 @@ jobs:
       - name: Download artifact
         uses: dawidd6/action-download-artifact@v2
         with:
-          workflow: ci.yml
+          workflow: build.yml
           run_number: ${{ inputs.artifact_workflow_number }}
           name: .net-app
           workflow_conclusion: success
