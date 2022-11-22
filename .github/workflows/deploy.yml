@@ -1,29 +1,24 @@
-name: Deploy ASP.Net Core app
-env:
-  DOTNET_VERSION: '6.0.x'
+name: Deploy ASP.Net app to an Azure Web App
 on:
   workflow_dispatch:
     inputs:
       artifact_workflow_number:
         required: true
-        description: 'workflow_id where artifacts will be uploaded'
+        description: 'workflow run number where artifacts will be downloaded'
 jobs:
   deploy:
     runs-on: windows-latest
-
     steps:
-      - uses: actions/checkout@v3
-      - name: Download artifact from build job
-        uses: actions/download-artifact@v3
+      - name: Download artifact
+        uses: dawidd6/action-download-artifact@v2
         with:
-          name: .net-app
           workflow: ci.yml
-          run_number: ${{inputs.artifact_workflow_number}}
+          run_number: ${{ inputs.artifact_workflow_number }}
+          name: .net-app
           workflow_conclusion: success
-
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
-        uses: azure/webapps-deploy@0b651ed7546ecfc75024011f76944cb9b381ef1e
+        uses: azure/webapps-deploy@v2
         with:
           app-name: ${{ secrets.AZURE_WEBAPP_NAME }}
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
